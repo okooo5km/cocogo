@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "cocogo"
+version = "0.1.0"
+description = "这是一个简单的 coco 标注文件信息查看工具，中文名叫扣2狗"
+authors = ["5km <5km@smslit.cn>"]
+readme = "README.md"
+
+[tool.poetry.scripts]
+cocogo = "cocogo.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+typer = "^0.3.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+autopep8 = "^1.5.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
