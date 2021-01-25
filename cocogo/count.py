@@ -13,7 +13,7 @@ import json
 import typer
 
 from .models import CoCOItem
-from .utilities import CoCoCallback
+from .utilities import CoCoCallback, classify_with_aspect_ratio
 
 
 def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, help='指定待检索的 json 文件'),
@@ -38,7 +38,18 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
         item_obj = json_data.get(item)
         if isinstance(item_obj, list):
             echo_item_count(item, len(item_obj))
+            if item == 'images':
+                classified_result = classify_with_aspect_ratio(images=item_obj)
+                typer.secho('\n图像不同宽高比数量统计如下:', fg=typer.colors.BRIGHT_YELLOW)
+                for ratio_str, value in classified_result.items():
+                    echo_str = typer.style(
+                        f'  宽高比 {ratio_str}: ', fg=typer.colors.BRIGHT_BLUE)
+                    echo_str += typer.style(f'{value}',
+                                            fg=typer.colors.BRIGHT_GREEN, bold=True)
+                    echo_str += typer.style(' 张', fg=typer.colors.BRIGHT_BLACK)
+                    typer.echo(echo_str)
         else:
             echo_item_count(item, 1)
+
     else:
         echo_item_count(item, 0)

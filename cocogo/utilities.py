@@ -8,10 +8,32 @@
 @contact       : 5km@smslit.cn
 '''
 import os
+from typing import List, Any, Dict
 
 import typer
 
 from .consts import __description__, __version__
+
+
+def classify_with_aspect_ratio(images: List[Dict[str, Any]]) -> Dict[str, int]:
+    '''按照宽高比对图像进行分类
+
+    Args:
+        images (List[Dict[str, Any]]): [description]
+
+    Returns:
+        Dict[str, int]: [description]
+    '''
+    result: Dict[str, List[int]] = {}
+    for image in images:
+        width = image.get('width')
+        height = image.get('height')
+        aspect_ratio_str = f'{round(width / height, 2)}-({width}, {height})'
+        if aspect_ratio_str in result:
+            result[aspect_ratio_str] += 1
+        else:
+            result[aspect_ratio_str] = 0
+    return result
 
 
 class CoCoCallback:
