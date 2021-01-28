@@ -140,3 +140,4 @@ cython_debug/
 # 
 poetry.lock
 .vscode/settings.json
+.python-version
