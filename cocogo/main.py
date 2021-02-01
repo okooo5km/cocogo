@@ -16,12 +16,6 @@ from . import count, detail, info, optimize
 
 app = typer.Typer(help=__description__)
 
-
-# @app.command('')
-# def main(version: bool = typer.Option(False, '--version', '-v', help='打印版本信息',
-#                                       is_eager=True, callback=CoCoCallback.version_echo)):
-#     pass
-
 app.command('info', help='查看文件中的基本信息，可以指定具体内容项')(info.main)
 app.command('list', help='查询数据')(detail.main)
 app.command('count', help='统计数据')(count.main)

@@ -7,28 +7,46 @@
 @author        : 5km
 @contact       : 5km@smslit.cn
 '''
-
-
 import os
 import json
 import shutil
 from datetime import datetime
+
 import typer
+import imagesize
+
 from .utilities import CoCoCallback
+
+
+def echo_summary_item(item: str, num1: int, num2: int, comment: str = None):
+    echo_str = typer.style(f'  - {item}: ',
+                           fg=typer.colors.YELLOW)
+    echo_str += typer.style(f'{num1}',
+                            fg=typer.colors.BRIGHT_RED, bold=True)
+    echo_str += typer.style(f' / ',
+                            fg=typer.colors.BRIGHT_BLACK)
+    echo_str += typer.style(f'{num2} ',
+                            fg=typer.colors.BRIGHT_GREEN, bold=True)
+    if comment:
+        echo_str += typer.style(comment, fg=typer.colors.BRIGHT_BLACK)
+
+    typer.echo(echo_str)
 
 
 def main(json_file: str = typer.Argument(...,
                                          callback=CoCoCallback.check_file,
-                                         help='The coco annotation file, json file'),
+                                         help='CoCo 标注文件路径'),
          img_dir: str = typer.Argument(...,
                                        callback=CoCoCallback.check_img_dir,
-                                       help='The coco image file direction'),
-         prefix: str = typer.Option('processed',
-                                    help='add the prefix to result file'),
+                                       help='标注文件对应的图像目录'),
+         prefix: str = typer.Option('processed', '--prefix', '-p',
+                                    help='优化后标注文件名的前缀'),
          verbose: bool = typer.Option(False, '--verbose', '-v', show_default=False,
-                                      help='print the detail info.'),
+                                      help='罗嗦模式，打印全部信息'),
          override: bool = typer.Option(False, '--override', '-o', show_default=False,
-                                       help='override the infile with new data.')):
+                                       help='保存文件覆盖原标注文件'),
+         check_size: bool = typer.Option(False,
+                                         help='检查标注文件中图像宽高是否与图像文件一致')):
     typer.secho('\nJson 数据加载中 ...', fg=typer.colors.YELLOW)
     with open(json_file, 'r') as fp:
         json_data = json.load(fp)
@@ -57,6 +75,14 @@ def main(json_file: str = typer.Argument(...,
                 if verbose:
                     typer.echo(f'  {image_id}. {file_name} - 缺失')
             else:
+                if check_size:
+                    image_width, image_height = imagesize.get(file_path)
+                    if (image_width != image['width']) or (image_height != image['height']):
+                        image['width'] = image_width
+                        image['height'] = image_height
+                        if verbose:
+                            typer.echo(
+                                f'  {image_id}. {file_name} - 宽高与图像实际尺寸不一致，已修复')
                 new_images_data.append(image)
     typer.secho('  完成!', fg=typer.colors.BRIGHT_GREEN)
 
@@ -103,20 +129,6 @@ def main(json_file: str = typer.Argument(...,
     echo_str += typer.style(f'{new_json_file_path}',
                             fg=typer.colors.GREEN, bold=True)
     typer.echo(echo_str)
-
-    def echo_summary_item(item: str, num1: int, num2: int, comment: str = None):
-        echo_str = typer.style(f'  - {item}: ',
-                               fg=typer.colors.YELLOW)
-        echo_str += typer.style(f'{num1}',
-                                fg=typer.colors.BRIGHT_RED, bold=True)
-        echo_str += typer.style(f' / ',
-                                fg=typer.colors.BRIGHT_BLACK)
-        echo_str += typer.style(f'{num2} ',
-                                fg=typer.colors.BRIGHT_GREEN, bold=True)
-        if comment:
-            echo_str += typer.style(comment, fg=typer.colors.BRIGHT_BLACK)
-
-        typer.echo(echo_str)
 
     typer.secho('\n优化总结:', fg=typer.colors.BRIGHT_YELLOW, bold=True)
     echo_summary_item('图像', miss_num_of_img, total_num_of_img, '(缺失/全部)')
