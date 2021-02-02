@@ -11,12 +11,13 @@
 import typer
 
 from .consts import __description__
-from . import count, detail, info, optimize
+from . import count, detail, info, optimize, version
 
 
 app = typer.Typer(help=__description__)
 
-app.command('info', help='查看文件中的基本信息，可以指定具体内容项')(info.main)
 app.command('list', help='查询数据')(detail.main)
 app.command('count', help='统计数据')(count.main)
+app.command('version', help="查看当前使用 cocogo 的版本")(version.main)
+app.command('info', help='查看文件中的基本信息，可以指定具体内容项')(info.main)
 app.command('optimize', help='优化数据，删除没有的图像数据及相关标注信息')(optimize.main)
