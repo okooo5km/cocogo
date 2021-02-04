@@ -32,7 +32,7 @@ def classify_with_aspect_ratio(images: List[Dict[str, Any]]) -> Dict[str, int]:
         if aspect_ratio_str in result:
             result[aspect_ratio_str] += 1
         else:
-            result[aspect_ratio_str] = 0
+            result[aspect_ratio_str] = 1
     return result
 
 
