@@ -16,6 +16,7 @@ cocogo = "cocogo.main:app"
 python = "^3.6"
 typer = "^0.3.2"
 imagesize = "^1.2.0"
+matplotlib = "^3.3.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
