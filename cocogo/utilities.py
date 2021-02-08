@@ -11,6 +11,8 @@ import os
 from typing import List, Any, Dict
 
 import typer
+import numpy as np
+from matplotlib import pyplot as plt
 
 from .consts import __description__, __version__
 
@@ -72,6 +74,78 @@ def build_idx_table(items: List[Dict[str, Any]],
     typer.secho("完成!", fg=typer.colors.BRIGHT_BLACK)
 
     return idx_dict
+
+
+def plot_wh_normalization(raw_data: dict = {},
+                          step: float = 0.02,
+                          title: str = "Annotations of all categories",
+                          output_dir: str = "plots"):
+    """ 绘制 bbox 宽高按图像宽高归一化统计热力分布
+
+    Args:
+        raw_data (dict, optional): 统计的数据. Defaults to {}.
+        step (float, optional): 粒度. Defaults to 0.02.
+        title (str, optional): 图像标题. Defaults to "Annotations of all categories".
+        output_dir (str, optional): 图像保存目录. Defaults to "plots".
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    dw, dh = step, step
+
+    h, w = np.mgrid[0:1+dh:dh, 0:1+dw:dw]
+    quantity = round(1.0 / step)
+    data = np.zeros((quantity, quantity))
+    for i in range(0, quantity):
+        for j in range(0, quantity):
+            w_ij = w[i][j]
+            h_ij = h[i][j]
+            key = f"{w_ij:.2f}-{h_ij:.2f}"
+            data[i][j] = len(raw_data[key]["annotations"])
+
+    v_min, v_max = -abs(data).max(), abs(data).max()
+    plt.figure(figsize=(10, 8))
+
+    plt.pcolor(w, h, data, cmap='RdBu', vmin=v_min, vmax=v_max)
+    plt.title(title)
+    plt.xlabel("width")
+    plt.ylabel("height")
+    plt.colorbar()
+
+    image_name = f"{title}.svg"
+    image_path = os.path.join(output_dir, image_name)
+
+    plt.savefig(image_path)
+
+
+def plot_category_quantities(names: list = [],
+                             quantities: list = [],
+                             title: str = "Quantities of annotations for all categories",
+                             output_dir: str = "plots"):
+    """ 绘制所有类别的数量统计直方图
+
+    Args:
+        names (list, optional): 类别名称列表. Defaults to [].
+        quantities (list, optional): 对应类别的 annotations 数量. Defaults to [].
+        title (str, optional): 直方图标题. Defaults to "Quantities of all categories".
+        output_dir (str, optional): 直方图保存目录. Defaults to "plots".
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    plt.figure(figsize=(12, 4))
+
+    plt.bar(names, quantities)
+    plt.title(title)
+    plt.xticks(rotation=30)
+    plt.xlabel("category name")
+    plt.ylabel("category quantity")
+
+    image_name = f"{title}.svg"
+    image_path = os.path.join(output_dir, image_name)
+
+    # bbox_inches 解决 xticks 内容显示不全的问题
+    plt.savefig(image_path, bbox_inches='tight')
 
 
 class CoCoCallback:

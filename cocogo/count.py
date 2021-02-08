@@ -7,9 +7,8 @@
 @author        : 5km
 @contact       : 5km@smslit.cn
 """
-
+import os
 import json
-from typing import Dict, Any
 
 import typer
 
@@ -17,6 +16,8 @@ from .models import CoCOItem
 from .utilities import (CoCoCallback,
                         build_idx_table,
                         init_scatter_data,
+                        plot_wh_normalization,
+                        plot_category_quantities,
                         classify_with_aspect_ratio)
 
 
@@ -104,6 +105,9 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                 typer.secho("完成！", fg=typer.colors.BRIGHT_BLACK)
 
                 typer.secho("\n标注数据按分类统计如下：", fg=typer.colors.BRIGHT_YELLOW)
+                plots_dir = os.path.abspath("plots")
+                quantities = []
+                category_names = []
                 for category in category_idx_table.values():
                     echo_info = typer.style(f"  {category.get('name')}: ",
                                             fg=typer.colors.BRIGHT_BLACK,
@@ -114,7 +118,27 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     echo_info += typer.style(f" 条",
                                              fg=typer.colors.BRIGHT_BLACK)
                     typer.echo(echo_info)
-                typer.echo()
+                    # 绘制每一种类别的宽高归一化分布图
+                    plot_wh_normalization(category["scatter"],
+                                          title=f"Annotations of {category['name']}")
+                    category_names.append(category["name"])
+                    quantities.append(len(category["data"]))
+
+                # 绘制归一化的宽高分布图
+                plot_wh_normalization(scatter_data,
+                                      output_dir=plots_dir)
+                # 绘制所有类别对应 annotation 的数量直方图
+                plot_category_quantities(category_names,
+                                         quantities,
+                                         output_dir=plots_dir)
+
+                echo_info = typer.style("\n统计图表已保存至目录 - ",
+                                        fg=typer.colors.BRIGHT_YELLOW)
+                echo_info += typer.style(f"{plots_dir}",
+                                         fg=typer.colors.BRIGHT_GREEN,
+                                         bold=True)
+                typer.echo(echo_info)
+
         else:
             echo_item_count(item, 1)
 
