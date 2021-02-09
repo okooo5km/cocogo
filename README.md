@@ -127,6 +127,59 @@ cocogo count -i images eval.json
 
 统计图像会列出各个宽、高比的图像个数。
 
+另外统计 annotation 的化还会生成相应的图表（各类别 annotation 的数量、 各类别 annotation 宽高归一化分布）：
+
+```shell
+cocogo count -i annotations train.json 
+
+加载 json 文件数据中...
+
+检索到数据项 annotations 371852 条记录!
+
+建立 images 索引...
+完成!
+
+建立 categories 索引...
+完成!
+
+统计标注数据...
+完成！
+
+标注数据按分类统计如下：
+  motocrane: 56686 条
+  towercrane: 85002 条
+  pumpcar: 4465 条
+  pushdozer: 19337 条
+  truck: 18322 条
+  digger: 49688 条
+  fire: 3303 条
+  smog: 25944 条
+  colorbelts: 6068 条
+  dustproof: 45610 条
+  cementmixer: 8524 条
+  pilingmachine: 5152 条
+  van: 6995 条
+  trailer: 12392 条
+  smalltruck: 9377 条
+  roller: 1596 条
+  windmill: 5584 条
+  bird: 7807 条
+
+统计图表已保存至目录 - /data/home/tianye/datasets/cocogo/plots
+```
+
+- 各类别统计数量直方图例图：
+
+  <img src="images/3.svg" width="480px">
+
+- 所有类别的 annotation 宽高归一化分布图例图：
+
+  <img src="images/1.svg" width="480px">
+
+- 指定类别的 annotation 宽高归一化分布图例图（motorcarane）：
+
+  <img src="images/2.svg" width="480px">
+
 ### 查看基本信息
 
 使用 info 子命令。
