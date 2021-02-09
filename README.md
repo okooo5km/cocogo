@@ -4,8 +4,6 @@
 
 使用 [poetry](https://python-poetry.org/)构建项目和管理环境依赖。
 
->这个工具目前是从自身需求出发，另外刚了解了 [typer](https://typer.tiangolo.com/) 库，为了实践特编写了此工具，功能简单，不喜勿喷，可以友好地反馈问题和建议，十分感谢。
-
 ## python 
 
 使用 python3.6 以上版本开发。
@@ -47,7 +45,7 @@ cocogo --help
 
 Usage: cocogo [OPTIONS] COMMAND [ARGS]...
 
-  此工具可以帮助您针对 coco 标注文件进行简单的检索或简单处理
+  此工具可以帮助您针对 coco 标注文件进行简单的检索或简单处理，帮助详见 https://github.com/smslit/cocogo
 
 Options:
   --help                          Show this message and exit.
