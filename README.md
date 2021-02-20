@@ -10,12 +10,10 @@
 
 ## 安装
 
-### 包安装
-
-访问[发行版页面](https://github.com/smslit/cocogo/releases)下载最新的 wheel 包，使用 pip 安装即可：
+### pip 安装
 
 ```shell
-pip install cocogo-0.1.1-py3-none-any.whl
+pip install cocogo
 ```
 
 ### poetry 安装
@@ -144,26 +142,26 @@ cocogo count -i annotations train.json
 完成！
 
 标注数据按分类统计如下：
-  motocrane: 56686 条
-  towercrane: 85002 条
-  pumpcar: 4465 条
-  pushdozer: 19337 条
-  truck: 18322 条
-  digger: 49688 条
-  fire: 3303 条
-  smog: 25944 条
-  colorbelts: 6068 条
-  dustproof: 45610 条
-  cementmixer: 8524 条
-  pilingmachine: 5152 条
-  van: 6995 条
-  trailer: 12392 条
-  smalltruck: 9377 条
-  roller: 1596 条
-  windmill: 5584 条
-  bird: 7807 条
+  moxxxxne: 56686 条
+  toxxxxne: 85002 条
+  pxxxxar: 4465 条
+  pxxxxr: 19337 条
+  txxxxk: 18322 条
+  dxxxxr: 49688 条
+  fxxxxe: 3303 条
+  sxxxxg: 25944 条
+  cxxxxs: 6068 条
+  dxxxxof: 45610 条
+  cxxxxer: 8524 条
+  pxxxxe: 5152 条
+  vxxxxn: 6995 条
+  txxxxer: 12392 条
+  sxxxxck: 9377 条
+  rxxxxer: 1596 条
+  wxxxxl: 5584 条
+  bxxxxd: 7807 条
 
-统计图表已保存至目录 - /data/home/tianye/datasets/cocogo/plots
+统计图表已保存至目录 - /data/plots
 ```
 
 - 各类别统计数量直方图例图：
@@ -307,7 +305,7 @@ checking  [███████████████████████
   完成!
 
 Json 数据保存中 ...
-  完成! - ../AI2019_22_new_date1216/processed_train.json
+  完成! - ./processed_train.json
 
 优化总结:
   - 图像: 0 / 127015 (缺失/全部)
