@@ -119,8 +119,9 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                                              fg=typer.colors.BRIGHT_BLACK)
                     typer.echo(echo_info)
                     # 绘制每一种类别的宽高归一化分布图
-                    plot_wh_normalization(category["scatter"],
-                                          title=f"Annotations of {category['name']}")
+                    if category.get("scatter"):
+                        plot_wh_normalization(category["scatter"],
+                                              title=f"Annotations of {category['name']}")
                     category_names.append(category["name"])
                     quantities.append(len(category["data"]))
 
