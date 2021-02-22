@@ -8,13 +8,15 @@
 @contact       : 5km@smslit.cn
 """
 import os
+import matplotlib
 from typing import List, Any, Dict
 
 import typer
 import numpy as np
 from matplotlib import pyplot as plt
-
 from .consts import __description__, __version__
+
+matplotlib.use("Agg")
 
 
 def classify_with_aspect_ratio(images: List[Dict[str, Any]]) -> Dict[str, int]:
