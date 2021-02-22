@@ -105,7 +105,8 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                 typer.secho("完成！", fg=typer.colors.BRIGHT_BLACK)
 
                 typer.secho("\n标注数据按分类统计如下：", fg=typer.colors.BRIGHT_YELLOW)
-                plots_dir = os.path.abspath("plots")
+                plots_dir = os.path.abspath(
+                    f"{os.path.basename(json_file).replace('.json', '')}-plots")
                 quantities = []
                 category_names = []
                 for category in category_idx_table.values():
@@ -121,7 +122,8 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     # 绘制每一种类别的宽高归一化分布图
                     if category.get("scatter"):
                         plot_wh_normalization(category["scatter"],
-                                              title=f"Annotations of {category['name']}")
+                                              title=f"Annotations of {category['name']}",
+                                              output_dir=plots_dir)
                     category_names.append(category["name"])
                     quantities.append(len(category["data"]))
 

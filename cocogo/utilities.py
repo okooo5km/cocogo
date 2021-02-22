@@ -98,17 +98,19 @@ def plot_wh_normalization(raw_data: dict = {},
     h, w = np.mgrid[0:1+dh:dh, 0:1+dw:dw]
     quantity = round(1.0 / step)
     data = np.zeros((quantity, quantity))
+    v_max = 0
     for i in range(0, quantity):
         for j in range(0, quantity):
             w_ij = w[i][j]
             h_ij = h[i][j]
             key = f"{w_ij:.2f}-{h_ij:.2f}"
             data[i][j] = len(raw_data[key]["annotations"])
+            if data[i][j] > v_max:
+                v_max = data[i][j]
 
-    v_min, v_max = -abs(data).max(), abs(data).max()
     plt.figure(figsize=(10, 8))
 
-    plt.pcolor(w, h, data, cmap='RdBu', vmin=v_min, vmax=v_max)
+    plt.pcolor(w, h, data, cmap='Blues', vmin=0, vmax=v_max)
     plt.title(title)
     plt.xlabel("width")
     plt.ylabel("height")
@@ -142,6 +144,9 @@ def plot_category_quantities(names: list = [],
     plt.figure(figsize=(12, 4))
 
     plt.bar(names, quantities)
+    # 绘制数字标签
+    for a, b in zip(names, quantities):
+        plt.text(a, b+0.05, '%.0f' % b, ha='center', va='bottom', fontsize=8)
     plt.title(title)
     plt.xticks(rotation=30)
     plt.xlabel("category name")
