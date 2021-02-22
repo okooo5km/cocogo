@@ -117,7 +117,11 @@ def plot_wh_normalization(raw_data: dict = {},
     image_name = f"{title}.svg"
     image_path = os.path.join(output_dir, image_name)
 
-    plt.savefig(image_path)
+    # 保存图像
+    plt.savefig(image_path, bbox_inches='tight')
+
+    # 关闭 figure
+    plt.close("all")
 
 
 def plot_category_quantities(names: list = [],
@@ -148,6 +152,9 @@ def plot_category_quantities(names: list = [],
 
     # bbox_inches 解决 xticks 内容显示不全的问题
     plt.savefig(image_path, bbox_inches='tight')
+
+    # 关闭 figure
+    plt.close("all")
 
 
 class CoCoCallback:
