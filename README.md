@@ -172,11 +172,11 @@ cocogo count -i annotations train.json
 
 - 所有类别的 annotation 宽高归一化分布图例图：
 
-  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/1-20210225171755.svg" width="480px">
+  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/1-20210225172147.svg" width="480px">
 
 - 指定类别的 annotation 宽高归一化分布图例图（motorcarane）：
 
-  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/2-20210225171806.svg" width="480px">
+  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/2-20210225172302.svg" width="480px">
 
 - 指定类别的 annotation 宽高实际尺寸分布图例图（motorcarane）：
 
