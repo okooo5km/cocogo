@@ -16,6 +16,7 @@ from .models import CoCOItem
 from .utilities import (CoCoCallback,
                         build_idx_table,
                         init_scatter_data,
+                        plot_images_quantities,
                         plot_wh_normalization,
                         plot_category_quantities,
                         classify_with_aspect_ratio)
@@ -39,6 +40,9 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
 
     keys = json_data.keys()
 
+    plots_dir = os.path.abspath(
+        f"{os.path.basename(json_file).replace('.json', '')}-plots")
+
     if item in keys:
         item_obj = json_data.get(item)
         if isinstance(item_obj, list):
@@ -49,10 +53,16 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                 for ratio_str, value in classified_result.items():
                     echo_str = typer.style(
                         f"  宽高比 {ratio_str}: ", fg=typer.colors.BRIGHT_BLUE)
-                    echo_str += typer.style(f"{value}",
+                    count = value.get('count', 0)
+                    echo_str += typer.style(f"{count}",
                                             fg=typer.colors.BRIGHT_GREEN, bold=True)
                     echo_str += typer.style(" 张", fg=typer.colors.BRIGHT_BLACK)
                     typer.echo(echo_str)
+                # 绘制图像统计信息
+                plot_images_quantities(classified_result, output_dir=plots_dir)
+
+                typer.secho(f"\n图像不同宽高比数量统计图像保存至目录 - {plots_dir}",
+                            fg=typer.colors.BRIGHT_YELLOW)
 
             elif item == "annotations":
                 # 初始化散点图数据
@@ -105,8 +115,7 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                 typer.secho("完成！", fg=typer.colors.BRIGHT_BLACK)
 
                 typer.secho("\n标注数据按分类统计如下：", fg=typer.colors.BRIGHT_YELLOW)
-                plots_dir = os.path.abspath(
-                    f"{os.path.basename(json_file).replace('.json', '')}-plots")
+
                 quantities = []
                 category_names = []
                 for category in category_idx_table.values():

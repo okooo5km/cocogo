@@ -14,6 +14,7 @@ from typing import List, Any, Dict
 import typer
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import colors as mcolors
 from .consts import __description__, __version__
 
 matplotlib.use("Agg")
@@ -34,10 +35,82 @@ def classify_with_aspect_ratio(images: List[Dict[str, Any]]) -> Dict[str, int]:
         height = image.get("height")
         aspect_ratio_str = f"{round(width / height, 2)}-({width}, {height})"
         if aspect_ratio_str in result:
-            result[aspect_ratio_str] += 1
+            result[aspect_ratio_str]["count"] += 1
         else:
-            result[aspect_ratio_str] = 1
+            result[aspect_ratio_str] = {
+                "count": 1,
+                "width": width,
+                "height": height
+            }
     return result
+
+
+def plot_images_quantities(
+        data: Dict[str, Dict[str, int]],
+        title: str = "quantities of images with different width and height",
+        output_dir: str = "plots"
+):
+    """绘制图像按照宽高统计的信息
+
+    Args:
+        data (Dict[str, Dict[str, int]]): 图像的宽高统计数据，例如：
+        {
+            "1.33-(2592, 1944)": {
+                "count": 1083,
+                "width": 2592,
+                "height": 1944
+            }
+        }
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    counts = []
+    legends = []
+    max_width, max_height, max_count = 0, 0, 0
+
+    plt.figure(figsize=(8, 8))
+
+    for value in data.values():
+        count = value.get("count")
+        max_count = max(max_count, count)
+
+    color = mcolors.CSS4_COLORS["blue"]
+
+    current_axis = plt.gca()
+
+    for index, value in enumerate(data.values()):
+        count = value.get("count")
+        width = value.get("width")
+        height = value.get("height")
+        counts.append(count)
+        current_axis.add_patch(plt.Rectangle(
+            (0, 0),
+            width,
+            height,
+            linewidth=1,
+            edgecolor=color,
+            facecolor="none",
+            alpha=count*0.5/max_count + 0.1)
+        )
+        legends.append(f"Pic({width},{height}) - {count}")
+        max_width = max(max_width, width)
+        max_height = max(max_height, height)
+
+    # plt.legend(legends, ncol=3, loc="best", fontsize=8)
+    plt.title("test")
+    plt.xlabel("width")
+    plt.ylabel("height")
+    plt.xlim((-100, max_width + 100))
+    plt.ylim((-100, 1.3 * max_height))
+    image_name = f"{title}.svg"
+    image_path = os.path.join(output_dir, image_name)
+
+    # 保存图像
+    plt.savefig(image_path, bbox_inches='tight')
+
+    # 关闭 figure
+    plt.close("all")
 
 
 def init_scatter_data(step: float = 0.02) -> Dict[str, Dict[str, Any]]:
