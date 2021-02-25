@@ -64,6 +64,28 @@ def find_max_size_of_images(images: List[Dict[str, Any]]) -> Tuple[int, int]:
     return (max_width, max_height)
 
 
+def find_max_size_of_annotations(
+    annotations: List[Dict[str, Any]]
+) -> Tuple[int, int]:
+    """找到标注中最大的宽高尺寸
+
+    Args:
+        annotations (List[Dict[str, Any]]): coco 中标注列表原数据
+
+    Returns:
+        Tuple[int, int]: 最大尺寸元组(宽, 高)
+    """
+    max_width = 0
+    max_height = 0
+    for annotation in annotations:
+        bbox = annotation.get("bbox")
+        width = bbox[2]
+        height = bbox[3]
+        max_width = max(max_width, width)
+        max_height = max(max_height, height)
+    return (max_width, max_height)
+
+
 def plot_images_quantities(
         data: Dict[str, Dict[str, int]],
         title: str = "quantities of images with different width and height",
@@ -126,14 +148,14 @@ def plot_images_quantities(
     image_path = os.path.join(output_dir, image_name)
 
     # 保存图像
-    plt.savefig(image_path, bbox_inches='tight')
+    plt.savefig(image_path)
 
     # 关闭 figure
     plt.close("all")
 
 
 def init_norm_scatter_data(step: float = 0.02) -> Dict[str, Dict[str, Any]]:
-    """ bbox 散点图数据初始化（归一化）
+    """ annotation 散点图数据初始化（归一化）
     """
     if step > 0.5:
         step = 0.02
@@ -144,6 +166,24 @@ def init_norm_scatter_data(step: float = 0.02) -> Dict[str, Dict[str, Any]]:
             scatter_dict[f"{i:.2f}-{j:.2f}"] = {
                 "x": i,
                 "y": j,
+                "annotations": []
+            }
+    return scatter_dict
+
+
+def init_scatter_data(
+    max_x: int = 4000,
+    max_y: int = 4000,
+    step: int = 50
+) -> Dict[str, Dict[str, Any]]:
+    """ annotation 散点图数据初始化
+    """
+    scatter_dict: Dict[str, Dict[str, Any]] = {}
+    for x in range(0, max_x + step, step):
+        for y in range(0, max_y + step, step):
+            scatter_dict[f"{x}-{y}"] = {
+                "x": x,
+                "y": y,
                 "annotations": []
             }
     return scatter_dict
@@ -172,14 +212,14 @@ def build_idx_table(items: List[Dict[str, Any]],
 
 def plot_wh_normalization(raw_data: dict = {},
                           step: float = 0.02,
-                          title: str = "Annotations of all categories",
+                          title: str = "Annotation normalized size of all categories",
                           output_dir: str = "plots"):
-    """ 绘制 bbox 宽高按图像宽高归一化统计热力分布
+    """ 绘制 annotation 宽高按图像宽高归一化统计热力分布
 
     Args:
         raw_data (dict, optional): 统计的数据. Defaults to {}.
         step (float, optional): 粒度. Defaults to 0.02.
-        title (str, optional): 图像标题. Defaults to "Annotations of all categories".
+        title (str, optional): 图像标题. Defaults to "Annotation normalized size of all categories".
         output_dir (str, optional): 图像保存目录. Defaults to "plots".
     """
     if not os.path.exists(output_dir):
@@ -212,7 +252,56 @@ def plot_wh_normalization(raw_data: dict = {},
     image_path = os.path.join(output_dir, image_name)
 
     # 保存图像
-    plt.savefig(image_path, bbox_inches='tight')
+    plt.savefig(image_path, )
+
+    # 关闭 figure
+    plt.close("all")
+
+
+def plot_wh(raw_data: dict = {},
+            step: int = 50,
+            max_size: int = 4000,
+            title: str = "Annotation size of all categories",
+            output_dir: str = "plots"):
+    """ 绘制 annotation 宽高按图像宽高统计热力分布
+
+    Args:
+        raw_data (dict, optional): 统计的数据. Defaults to {}.
+        step (int, optional): 粒度. Defaults to 0.02.
+        max_size (int, optional): 最大的尺寸. Defaults to 4000
+        title (str, optional): 图像标题. Defaults to "Annotation size of all categories".
+        output_dir (str, optional): 图像保存目录. Defaults to "plots".
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    dw, dh = step, step
+
+    h, w = np.mgrid[0:max_size+dh:dh, 0:max_size+dw:dw]
+    quantity = h.shape[0] - 1
+    data = np.zeros((quantity, quantity))
+    v_max = 0
+    for i in range(0, quantity):
+        for j in range(0, quantity):
+            w_ij = w[i][j]
+            h_ij = h[i][j]
+            key = f"{w_ij}-{h_ij}"
+            data[i][j] = len(raw_data[key]["annotations"])
+            v_max = max(data[i][j], v_max)
+
+    plt.figure(figsize=(10, 8))
+
+    plt.pcolor(w, h, data, cmap='Blues', vmin=0, vmax=v_max)
+    plt.title(title)
+    plt.xlabel("width")
+    plt.ylabel("height")
+    plt.colorbar()
+
+    image_name = f"{title}.svg"
+    image_path = os.path.join(output_dir, image_name)
+
+    # 保存图像
+    plt.savefig(image_path)
 
     # 关闭 figure
     plt.close("all")
@@ -247,8 +336,8 @@ def plot_category_quantities(names: list = [],
     image_name = f"{title}.svg"
     image_path = os.path.join(output_dir, image_name)
 
-    # bbox_inches 解决 xticks 内容显示不全的问题
-    plt.savefig(image_path, bbox_inches='tight')
+    # TODO: annotation_inches 解决 xticks 内容显示不全的问题
+    plt.savefig(image_path)
 
     # 关闭 figure
     plt.close("all")

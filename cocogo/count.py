@@ -13,13 +13,16 @@ import json
 import typer
 
 from .models import CoCOItem
-from .utilities import (CoCoCallback,
+from .utilities import (plot_wh,
+                        CoCoCallback,
                         build_idx_table,
+                        init_scatter_data,
+                        plot_wh_normalization,
                         init_norm_scatter_data,
                         plot_images_quantities,
-                        plot_wh_normalization,
                         plot_category_quantities,
-                        classify_with_aspect_ratio)
+                        classify_with_aspect_ratio,
+                        find_max_size_of_annotations)
 
 
 def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, help="指定待检索的 json 文件"),
@@ -65,11 +68,16 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                             fg=typer.colors.BRIGHT_YELLOW)
 
             elif item == "annotations":
+                # 获取图像最大宽、高
+                max_width, max_height = find_max_size_of_annotations(item_obj)
                 # 初始化归一化散点图数据
                 NORM_STEP = 0.02
                 norm_scatter_data = init_norm_scatter_data(step=NORM_STEP)
 
                 # 初始化标注框原尺寸散点数据
+                max_size = max(max_width, max_height)
+                STEP = 64
+                scatter_data = init_scatter_data(max_size, max_size, STEP)
 
                 # 建立 images 索引
                 image_idx_table = build_idx_table(
@@ -95,6 +103,7 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     image_height = image.get("height")
                     ann_width = annotation.get("bbox")[2]
                     ann_height = annotation.get("bbox")[3]
+                    ann_max_size = max(ann_width, ann_height)
                     # 减 2 是为了不让归一化数据超过 1.0 ，2 随意定的，大于 0 即可
                     if ann_width > image_width:
                         ann_width = image_width - 2
@@ -105,19 +114,38 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
 
                     category["data"].append(annotation)
 
-                    _w = w // NORM_STEP * NORM_STEP
-                    _h = h // NORM_STEP * NORM_STEP
+                    # 存值范围的尺寸
+                    _w = ann_width // STEP * STEP
+                    _h = ann_height // STEP * STEP
 
-                    norm_scatter_key = f"{_w:.2f}-{_h:.2f}"
+                    # 归一化尺寸
+                    __w = w // NORM_STEP * NORM_STEP
+                    __h = h // NORM_STEP * NORM_STEP
+
+                    scatter_key = f"{_w}-{_h}"
+                    scatter_data[scatter_key]["annotations"].append(idx)
+
+                    # 归一化数据 key
+                    norm_scatter_key = f"{__w:.2f}-{__h:.2f}"
                     norm_scatter_data[norm_scatter_key]["annotations"].append(
-                        annotation)
+                        idx)
 
+                    if "scatter" not in category:
+                        category["scatter"] = init_scatter_data(
+                            max_x=max_size,
+                            max_y=max_size,
+                            step=STEP)
                     if "norm_scatter" not in category:
                         category["norm_scatter"] = init_norm_scatter_data(
                             step=NORM_STEP)
+                    if "max_size" not in category:
+                        category["max_size"] = 0
 
+                    category["scatter"][scatter_key]["annotations"].append(idx)
                     category["norm_scatter"][norm_scatter_key]["annotations"].append(
                         idx)
+                    category["max_size"] = max(
+                        category["max_size"], ann_max_size)
 
                 typer.secho("完成！", fg=typer.colors.BRIGHT_BLACK)
 
@@ -138,8 +166,17 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     # 绘制每一种类别的宽高归一化分布图
                     if category.get("norm_scatter"):
                         plot_wh_normalization(category["norm_scatter"],
-                                              title=f"Annotations of {category['name']}",
+                                              title=f"Annotation normlized size of {category['name']}",
                                               output_dir=plots_dir)
+
+                    # 绘制每一种类别的宽高分布图
+                    if category.get("scatter"):
+                        plot_wh(category["scatter"],
+                                step=STEP,
+                                max_size=category["max_size"],
+                                title=f"Annotation size of {category['name']}",
+                                output_dir=plots_dir)
+
                     category_names.append(category["name"])
                     quantities.append(len(category["data"]))
 
