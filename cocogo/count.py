@@ -15,7 +15,7 @@ import typer
 from .models import CoCOItem
 from .utilities import (CoCoCallback,
                         build_idx_table,
-                        init_scatter_data,
+                        init_norm_scatter_data,
                         plot_images_quantities,
                         plot_wh_normalization,
                         plot_category_quantities,
@@ -65,9 +65,12 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                             fg=typer.colors.BRIGHT_YELLOW)
 
             elif item == "annotations":
-                # 初始化散点图数据
-                STEP = 0.02
-                scatter_data = init_scatter_data(step=STEP)
+                # 初始化归一化散点图数据
+                NORM_STEP = 0.02
+                norm_scatter_data = init_norm_scatter_data(step=NORM_STEP)
+
+                # 初始化标注框原尺寸散点数据
+
                 # 建立 images 索引
                 image_idx_table = build_idx_table(
                     json_data.get("images"),
@@ -92,6 +95,7 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     image_height = image.get("height")
                     ann_width = annotation.get("bbox")[2]
                     ann_height = annotation.get("bbox")[3]
+                    # 减 2 是为了不让归一化数据超过 1.0 ，2 随意定的，大于 0 即可
                     if ann_width > image_width:
                         ann_width = image_width - 2
                     if ann_height > image_height:
@@ -99,18 +103,21 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     w = ann_width / image_width
                     h = ann_height / image_height
 
-                    category["data"].append(idx)
+                    category["data"].append(annotation)
 
-                    _w = w // STEP * STEP
-                    _h = h // STEP * STEP
+                    _w = w // NORM_STEP * NORM_STEP
+                    _h = h // NORM_STEP * NORM_STEP
 
-                    scatter_key = f"{_w:.2f}-{_h:.2f}"
-                    scatter_data[scatter_key]["annotations"].append(idx)
+                    norm_scatter_key = f"{_w:.2f}-{_h:.2f}"
+                    norm_scatter_data[norm_scatter_key]["annotations"].append(
+                        annotation)
 
-                    if "scatter" not in category:
-                        category["scatter"] = init_scatter_data(step=STEP)
+                    if "norm_scatter" not in category:
+                        category["norm_scatter"] = init_norm_scatter_data(
+                            step=NORM_STEP)
 
-                    category["scatter"][scatter_key]["annotations"].append(idx)
+                    category["norm_scatter"][norm_scatter_key]["annotations"].append(
+                        idx)
 
                 typer.secho("完成！", fg=typer.colors.BRIGHT_BLACK)
 
@@ -129,15 +136,15 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                                              fg=typer.colors.BRIGHT_BLACK)
                     typer.echo(echo_info)
                     # 绘制每一种类别的宽高归一化分布图
-                    if category.get("scatter"):
-                        plot_wh_normalization(category["scatter"],
+                    if category.get("norm_scatter"):
+                        plot_wh_normalization(category["norm_scatter"],
                                               title=f"Annotations of {category['name']}",
                                               output_dir=plots_dir)
                     category_names.append(category["name"])
                     quantities.append(len(category["data"]))
 
                 # 绘制归一化的宽高分布图
-                plot_wh_normalization(scatter_data,
+                plot_wh_normalization(norm_scatter_data,
                                       output_dir=plots_dir)
                 # 绘制所有类别对应 annotation 的数量直方图
                 plot_category_quantities(category_names,

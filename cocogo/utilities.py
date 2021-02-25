@@ -9,7 +9,7 @@
 """
 import os
 import matplotlib
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Tuple
 
 import typer
 import numpy as np
@@ -43,6 +43,25 @@ def classify_with_aspect_ratio(images: List[Dict[str, Any]]) -> Dict[str, int]:
                 "height": height
             }
     return result
+
+
+def find_max_size_of_images(images: List[Dict[str, Any]]) -> Tuple[int, int]:
+    """找到图像中最大的宽高尺寸
+
+    Args:
+        images (List[Dict[str, Any]]): coco 中图像列表原数据
+
+    Returns:
+        Tuple[int, int]: 最大尺寸元组(宽, 高)
+    """
+    max_width = 0
+    max_height = 0
+    for image in images:
+        width = image.get("width")
+        height = image.get("height")
+        max_width = max(max_width, width)
+        max_height = max(max_height, height)
+    return (max_width, max_height)
 
 
 def plot_images_quantities(
@@ -113,7 +132,7 @@ def plot_images_quantities(
     plt.close("all")
 
 
-def init_scatter_data(step: float = 0.02) -> Dict[str, Dict[str, Any]]:
+def init_norm_scatter_data(step: float = 0.02) -> Dict[str, Dict[str, Any]]:
     """ bbox 散点图数据初始化（归一化）
     """
     if step > 0.5:
