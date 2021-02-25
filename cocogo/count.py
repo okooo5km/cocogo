@@ -62,10 +62,14 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     echo_str += typer.style(" 张", fg=typer.colors.BRIGHT_BLACK)
                     typer.echo(echo_str)
                 # 绘制图像统计信息
-                plot_images_quantities(classified_result, output_dir=plots_dir)
+                title = "Quantities of images with different width and height"
+                plot_images_quantities(
+                    classified_result, title, output_dir=plots_dir)
 
                 typer.secho(f"\n图像不同宽高比数量统计图像保存至目录 - {plots_dir}",
                             fg=typer.colors.BRIGHT_YELLOW)
+                typer.secho(f"图像名称 - {title}.svg",
+                            fg=typer.colors.BRIGHT_GREEN)
 
             elif item == "annotations":
                 # 获取图像最大宽、高

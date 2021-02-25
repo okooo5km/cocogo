@@ -88,7 +88,7 @@ def find_max_size_of_annotations(
 
 def plot_images_quantities(
         data: Dict[str, Dict[str, int]],
-        title: str = "quantities of images with different width and height",
+        title: str = "Quantities of images with different width and height",
         output_dir: str = "plots"
 ):
     """绘制图像按照宽高统计的信息
@@ -138,7 +138,7 @@ def plot_images_quantities(
         max_width = max(max_width, width)
         max_height = max(max_height, height)
 
-    # plt.legend(legends, ncol=3, loc="best", fontsize=8)
+    plt.legend(legends, ncol=3, loc="best", fontsize=8)
     plt.title("test")
     plt.xlabel("width")
     plt.ylabel("height")
@@ -322,7 +322,7 @@ def plot_category_quantities(names: list = [],
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    plt.figure(figsize=(12, 4))
+    plt.figure(figsize=(12, 8))
 
     plt.bar(names, quantities)
     # 绘制数字标签
@@ -336,7 +336,7 @@ def plot_category_quantities(names: list = [],
     image_name = f"{title}.svg"
     image_path = os.path.join(output_dir, image_name)
 
-    # TODO: annotation_inches 解决 xticks 内容显示不全的问题
+    # annotation_inches 解决 xlabels 内容显示不全的问题
     plt.tight_layout()
     plt.savefig(image_path)
 
