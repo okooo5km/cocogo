@@ -166,7 +166,7 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                     # 绘制每一种类别的宽高归一化分布图
                     if category.get("norm_scatter"):
                         plot_wh_normalization(category["norm_scatter"],
-                                              title=f"Annotation normlized size of {category['name']}",
+                                              title=f"Annotation normalized size of {category['name']}",
                                               output_dir=plots_dir)
 
                     # 绘制每一种类别的宽高分布图
@@ -174,7 +174,7 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                         plot_wh(category["scatter"],
                                 step=STEP,
                                 max_size=category["max_size"],
-                                title=f"Annotation size of {category['name']}",
+                                title=f"Annotation size of {category['name']} - {STEP}x{STEP}",
                                 output_dir=plots_dir)
 
                     category_names.append(category["name"])
