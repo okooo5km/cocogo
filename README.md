@@ -121,7 +121,9 @@ cocogo count -i images eval.json
   宽高比 0.75-(2976, 3968): 1 张
 ```
 
-统计图像会列出各个宽、高比的图像个数。
+统计图像会列出各个宽、高比的图像个数，同时会生成按照宽高统计的尺寸分布图，如下：
+
+<img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/5-20210225171723.svg" width="480px">
 
 另外统计 annotation 的化还会生成相应的图表（各类别 annotation 的数量、 各类别 annotation 宽高归一化分布）：
 
@@ -166,15 +168,19 @@ cocogo count -i annotations train.json
 
 - 各类别统计数量直方图例图：
 
-  <img src="images/3.svg" width="480px">
+  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/3-20210225171743.svg" width="480px">
 
 - 所有类别的 annotation 宽高归一化分布图例图：
 
-  <img src="images/1.svg" width="480px">
+  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/1-20210225171755.svg" width="480px">
 
 - 指定类别的 annotation 宽高归一化分布图例图（motorcarane）：
 
-  <img src="images/2.svg" width="480px">
+  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/2-20210225171806.svg" width="480px">
+
+- 指定类别的 annotation 宽高实际尺寸分布图例图（motorcarane）：
+
+  <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/4-20210225171818.svg" width="480px">
 
 ### 查看基本信息
 
