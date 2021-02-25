@@ -329,7 +329,7 @@ def plot_category_quantities(names: list = [],
     for a, b in zip(names, quantities):
         plt.text(a, b+0.05, f"{b}", ha="center", va="bottom", fontsize=8)
     plt.title(title)
-    plt.xticks(rotation=30)
+    plt.xticks(rotation=90)
     plt.xlabel("category name")
     plt.ylabel("category quantity")
 
@@ -337,6 +337,7 @@ def plot_category_quantities(names: list = [],
     image_path = os.path.join(output_dir, image_name)
 
     # TODO: annotation_inches 解决 xticks 内容显示不全的问题
+    plt.tight_layout()
     plt.savefig(image_path)
 
     # 关闭 figure
