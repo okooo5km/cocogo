@@ -174,7 +174,7 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                         plot_wh(category["scatter"],
                                 step=STEP,
                                 max_size=category["max_size"],
-                                title=f"Annotation size of {category['name']} - {STEP}x{STEP}",
+                                title=f"Annotation size of {category['name']}",
                                 output_dir=plots_dir)
 
                     category_names.append(category["name"])

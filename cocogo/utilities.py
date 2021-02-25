@@ -292,7 +292,7 @@ def plot_wh(raw_data: dict = {},
     plt.figure(figsize=(10, 8))
 
     plt.pcolor(w, h, data, cmap='Blues', vmin=0, vmax=v_max)
-    plt.title(title)
+    plt.title(f"{title}-Grid({step}x{step})")
     plt.xlabel("width")
     plt.ylabel("height")
     plt.colorbar()
