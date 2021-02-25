@@ -219,7 +219,7 @@ def plot_category_quantities(names: list = [],
     plt.bar(names, quantities)
     # 绘制数字标签
     for a, b in zip(names, quantities):
-        plt.text(a, b+0.05, '%.0f' % b, ha='center', va='bottom', fontsize=8)
+        plt.text(a, b+0.05, f"{b}", ha="center", va="bottom", fontsize=8)
     plt.title(title)
     plt.xticks(rotation=30)
     plt.xlabel("category name")
