@@ -198,7 +198,47 @@ def main(json_file: str = typer.Argument(..., callback=CoCoCallback.check_file, 
                                          fg=typer.colors.BRIGHT_GREEN,
                                          bold=True)
                 typer.echo(echo_info)
+            elif item == "categories":
+                annotations = json_data.get("annotations")
+                categories = {}
+                for category in item_obj:
+                    category["images"] = set()
+                    category["annotations"] = set()
+                    categories[category.get("id")] = category
 
+                for annotation in annotations:
+                    annotation_id = annotation.get("id")
+                    image_id = annotation.get("image_id")
+                    category_id = annotation.get("category_id")
+
+                    categories[category_id]["images"].add(image_id)
+                    categories[category_id]["annotations"].add(
+                        annotation_id)
+
+                typer.secho("\n包含指定类别图像以及标注数量统计如下:\n",
+                            fg=typer.colors.BRIGHT_YELLOW)
+                for category in categories.values():
+                    name = category.get("name")
+                    images_count = len(category.get("images"))
+                    annotations_count = len(category.get("annotations"))
+                    echo_str = typer.style(f"{name:>20}",
+                                           fg=typer.colors.BRIGHT_BLUE,
+                                           bold=True)
+                    echo_str += typer.style(f" > 图像 ",
+                                            fg=typer.colors.BRIGHT_YELLOW)
+                    echo_str += typer.style(f"{images_count:^8}",
+                                            fg=typer.colors.BRIGHT_GREEN,
+                                            bold=True)
+                    echo_str += typer.style(" 张，标注 ",
+                                            fg=typer.colors.BRIGHT_YELLOW)
+                    echo_str += typer.style(f"{annotations_count:^8}",
+                                            fg=typer.colors.BRIGHT_GREEN,
+                                            bold=True)
+                    echo_str += typer.style(" 个",
+                                            fg=typer.colors.BRIGHT_YELLOW)
+                    typer.echo(echo_str)
+
+                typer.echo()
         else:
             echo_item_count(item, 1)
 
