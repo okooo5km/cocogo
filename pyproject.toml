@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cocogo"
-version = "0.1.6b"
+version = "0.1.6"
 description = "这是一个简单的 coco 标注文件信息查看和优化处理工具，中文名叫扣2狗"
 authors = ["5km <5km@smslit.cn>"]
 maintainers = ["5km <5km@smslit.cn>"]
