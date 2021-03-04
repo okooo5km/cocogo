@@ -88,6 +88,8 @@ Options:
 
 可以看到使用方式很简单，当然功能也很简单，只有一个选项就是指定要统计项，统计项不指定默认为图像，现在只是统计个数。
 
+#### 统计图像数据
+
 比如：
 
 ```shell
@@ -124,6 +126,8 @@ cocogo count -i images eval.json
 统计图像会列出各个宽、高比的图像个数，同时会生成按照宽高统计的尺寸分布图，如下：
 
 <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/5-20210225171723.svg" width="480px">
+
+#### 统计标注
 
 另外统计 annotation 的化还会生成相应的图表（各类别 annotation 的数量、 各类别 annotation 宽高归一化分布）：
 
@@ -181,6 +185,38 @@ cocogo count -i annotations train.json
 - 指定类别的 annotation 宽高实际尺寸分布图例图（motorcarane）：
 
   <img src="https://pichome-1254392422.cos.ap-chengdu.myqcloud.com/uPic/4-20210225171818.svg" width="480px">
+
+#### 统计类别的数据
+
+```shell
+➜ cocogo count -i categories .eval.json
+
+加载 json 文件数据中...
+
+检索到数据项 categories 18 条记录!
+
+包含指定类别图像以及标注数量统计如下:
+
+           moxocxxxe > 图像   1347   张，标注   1754   个
+          toxxrcxxxe > 图像   1007   张，标注   3139   个
+             pumxxxr > 图像   156    张，标注   162    个
+           puxxdxxxr > 图像   620    张，标注   721    个
+               txxxk > 图像   455    张，标注   810    个
+              dixxxr > 图像   1409   张，标注   2020   个
+                xxxe > 图像    23    张，标注    39    个
+                xxxg > 图像   170    张，标注   187    个
+          cxlxrbxxxs > 图像    31    张，标注    35    个
+           dustpxxxf > 图像   792    张，标注   1546   个
+         cexxxxxxxxr > 图像   181    张，标注   249    个
+       pixxxxxxxxxxe > 图像   131    张，标注   183    个
+                xxxn > 图像   116    张，标注   178    个
+             traxxxr > 图像   265    张，标注   448    个
+          smalltxxxk > 图像   226    张，标注   282    个
+              roxxxr > 图像    0     张，标注    0     个
+            wxndxxxl > 图像    8     张，标注    21    个
+                xxxd > 图像    0     张，标注    0     个
+
+```
 
 ### 查看基本信息
 
